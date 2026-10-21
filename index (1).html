@@ -1,0 +1,337 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<style>body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>DTDC Chute Guide Plate</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: engineering viewer — big 3D viewport, control strip beneath, short notes */
+:root{
+  --bg:#eef0ee; --panel:#ffffff; --fg:#1d2420; --muted:#5b665f; --line:#cfd6d1;
+  --accent:#b07a12; --plate:#8a5a1c; --meal:#e8a46c; --view:#dfe4e0;
+  --sans:"IBM Plex Sans Thai",system-ui,sans-serif; --mono:"IBM Plex Mono",ui-monospace,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#151a17; --panel:#1d2420; --fg:#e6ebe7; --muted:#9aa69e; --line:#313b35;
+  --accent:#e0a83a; --plate:#b07a32; --meal:#f0b07a; --view:#202824; color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#151a17; --panel:#1d2420; --fg:#e6ebe7; --muted:#9aa69e; --line:#313b35;
+  --accent:#e0a83a; --plate:#b07a32; --meal:#f0b07a; --view:#202824; color-scheme:dark}
+body{background:var(--bg);color:var(--fg);font-family:var(--sans);font-size:15px;line-height:1.55}
+.wrap{max-width:1180px;margin:0 auto;padding-block:20px 40px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  display:flex;flex-direction:column;gap:16px}
+h1{font-size:1.45rem;margin:0;text-wrap:balance;font-weight:700}
+.sub{color:var(--muted);margin:2px 0 0;max-width:70ch}
+.eyebrow{font-family:var(--mono);font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+.viewer{position:relative;background:var(--view);border:1px solid var(--line);border-radius:6px;overflow:hidden;
+  aspect-ratio:16/10;max-height:72vh;width:100%;max-width:100%}
+.viewer canvas{display:block;width:100%;height:100%;touch-action:none}
+.legend{position:absolute;left:10px;top:10px;display:flex;flex-direction:column;gap:4px;
+  font-size:.78rem;background:color-mix(in srgb,var(--panel) 85%,transparent);padding:8px 10px;border-radius:4px;border:1px solid var(--line)}
+.legend span{display:flex;align-items:center;gap:6px}
+.sw{width:12px;height:12px;border-radius:2px;display:inline-block}
+.stat{position:absolute;right:10px;top:10px;font-family:var(--mono);font-size:.75rem;
+  background:color-mix(in srgb,var(--panel) 85%,transparent);padding:6px 9px;border-radius:4px;border:1px solid var(--line);
+  font-variant-numeric:tabular-nums;text-align:right}
+.hint{position:absolute;left:10px;bottom:8px;font-size:.72rem;color:var(--muted)}
+.controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;
+  background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:14px}
+.group{display:flex;flex-direction:column;gap:6px;min-width:0}
+.group label.t{font-size:.78rem;color:var(--muted);font-weight:600}
+.row{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+button{font:inherit;font-size:.85rem;padding:6px 11px;border-radius:4px;border:1px solid var(--line);
+  background:var(--bg);color:var(--fg);cursor:pointer}
+button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#1a1205;font-weight:600}
+button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+input[type=range]{width:100%;accent-color:var(--accent)}
+.val{font-family:var(--mono);font-size:.8rem;font-variant-numeric:tabular-nums}
+.notes{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+.notes div{min-width:0}
+.notes h2{font-size:.95rem;margin:0 0 4px}
+.notes p{margin:0;color:var(--muted);font-size:.88rem;max-width:65ch}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">DTDC discharge chute · section model</div>
+    <h1>Guide plate ควบคุมทิศทางการไหลของกากถั่วเหลือง</h1>
+    <p class="sub">รางเอียงจาก DTDC พร้อมแผ่นนำทางทรงตัว V (สีน้ำตาล) ติดบนพื้นราง บีบกากถั่วจากเต็มหน้ากว้างให้รวมเข้ากลางราง ไหลผ่านหน้า sight glass บนพื้นราง แล้วลงทางออก ลากเพื่อหมุน ซูมด้วยล้อเมาส์หรือสองนิ้ว</p>
+  </header>
+
+  <div class="viewer" id="viewer">
+    <div class="legend">
+      <span><i class="sw" style="background:#8a5a1c"></i>Guide plate</span>
+      <span><i class="sw" style="background:#e8a46c"></i>กากถั่ว (ไหลอิสระ)</span>
+      <span><i class="sw" style="background:#c0491b"></i>กากถั่วที่ถูก plate เบน</span>
+      <span><i class="sw" style="background:#7fc4e8"></i>Sight glass (ผิวเรียบเสมอพื้นราง)</span>
+      <span><i class="sw" style="background:#f2d21b"></i>Nozzle เก็บตัวอย่าง + แนวแทง probe</span>
+    </div>
+    <div class="stat" id="stat">—</div>
+    <div class="hint">พื้นรางอยู่ด้านล่าง · ผนังด้านบนโปร่งใสเพื่อมองเข้าไปข้างใน</div>
+  </div>
+
+  <div class="controls">
+    <div class="group">
+      <label class="t">มุมมอง</label>
+      <div class="row">
+        <button data-view="iso" aria-pressed="true">3D</button>
+        <button data-view="axis">มองลงพื้นราง (รูปขวา)</button>
+        <button data-view="side">ด้านข้าง (รูปกลาง)</button>
+        <button data-view="under">ใต้ราง (รูปซ้าย)</button>
+      </div>
+    </div>
+    <div class="group">
+      <label class="t">เปรียบเทียบ</label>
+      <div class="row">
+        <button id="btnPlate" aria-pressed="true">มี Guide plate</button>
+        <button id="btnRun" aria-pressed="true">เล่น</button>
+        <button id="btnWalls" aria-pressed="true">แสดงผนัง</button>
+      </div>
+    </div>
+    <div class="group">
+      <label class="t" for="ang">มุม plate จากผนังข้าง <span class="val" id="angV"></span></label>
+      <input type="range" id="ang" min="15" max="50" value="32">
+    </div>
+    <div class="group">
+      <label class="t" for="len">ช่องว่างที่ปลาย plate <span class="val" id="lenV"></span></label>
+      <input type="range" id="len" min="16" max="50" value="25">
+    </div>
+    <div class="group">
+      <label class="t" for="hgt">ความสูง plate <span class="val" id="hV"></span></label>
+      <input type="range" id="hgt" min="30" max="100" value="50">
+    </div>
+    <div class="group">
+      <label class="t" for="rate">อัตราป้อน <span class="val" id="rateV"></span></label>
+      <input type="range" id="rate" min="10" max="100" value="60">
+    </div>
+  </div>
+
+  <section class="notes">
+    <div><h2>สิ่งที่โมเดลแสดง</h2><p>หน้าตัดราง 350 × 270 mm เอียง 56° จากแนวราบ แผ่น plate ทั้งสองข้างยึดกับพื้นรางและผนังข้าง ทำจากเหล็กฉาก ขาตั้งสูงประมาณครึ่งหนึ่งของความลึกราง ขานอนเชื่อมติดพื้นรางฝั่ง sight glass ปลาย plate หยุดเหนือแนว nozzle เก็บตัวอย่าง เพื่อไม่ให้ขวางการแทง probe กากถั่วที่ไถลบนพื้นจะชน plate แล้วถูกเบนเข้ากลาง (สีส้มเข้ม) แล้วไหลผ่านหน้า sight glass ทรงกลมที่อยู่ปลาย V กระจกติดเสมอผิวพื้นรางจึงไม่ขวางการไหล ยึดด้วยโครงสี่เหลี่ยมพร้อมสลัก 4 ตัวด้านนอก</p></div>
+    <div><h2>ข้อสังเกตตอนออกแบบ</h2><p>มุม plate ยิ่งชันยิ่งบีบเร็วแต่เสี่ยงกากถั่วค้างที่มุมระหว่าง plate กับผนัง ควรปิดด้านบนของมุมนั้น (ทำเป็นสามเหลี่ยมปิด) กันกากถั่วสะสม ช่องกลางควรแคบพอให้กากถั่วไหลผ่านหน้ากระจกเต็มวง แต่ต้องกว้างพอกับอัตราไหลสูงสุดไม่ให้ล้นข้าม plate</p></div>
+    <div><h2>ข้อจำกัด</h2><p>เป็นการจำลองอนุภาคแบบง่าย (แรงโน้มถ่วง แรงเสียดทาน การชน) ใช้ดูรูปแบบการไหลเชิงคุณภาพ ไม่ใช่ DEM สัดส่วนรางประมาณจากรูปที่แนบ ปรับขนาดจริงตามแบบหน้างาน</p></div>
+  </section>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+(()=>{
+const viewer=document.getElementById('viewer');
+const renderer=new THREE.WebGLRenderer({antialias:true});
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+viewer.prepend(renderer.domElement);
+const scene=new THREE.Scene();
+const camera=new THREE.PerspectiveCamera(38,1,0.05,100);
+const controls=new THREE.OrbitControls(camera,renderer.domElement);
+controls.enableDamping=true;
+
+scene.add(new THREE.HemisphereLight(0xffffff,0x667066,0.85));
+const sun=new THREE.DirectionalLight(0xffffff,0.75); sun.position.set(3,6,4); scene.add(sun);
+
+// ---- chute geometry (local: x = width, y = depth/normal to floor, z = along flow) ----
+// 1 unit = 350 mm (chute width). Depth 270 mm, chute axis 56° from horizontal (per drawing)
+const MM=350, W=1.0, H=270/350, L=3.0, TILT=56*Math.PI/180;
+const chute=new THREE.Group(); chute.rotation.x=TILT; chute.position.set(0,1.2,-1.0); scene.add(chute);
+
+const wallMat=new THREE.MeshStandardMaterial({color:0xd9d4c4,transparent:true,opacity:0.16,side:THREE.DoubleSide,depthWrite:false,roughness:.8});
+const floorMat=new THREE.MeshStandardMaterial({color:0xcfc9b6,roughness:.9,side:THREE.DoubleSide});
+const edgeMat=new THREE.LineBasicMaterial({color:0x7d8a82});
+function panel(w,h,mat){return new THREE.Mesh(new THREE.PlaneGeometry(w,h),mat);}
+const walls=new THREE.Group(); chute.add(walls);
+const floor=panel(W,L,floorMat); floor.rotation.x=-Math.PI/2; floor.position.set(0,-H/2,L/2); chute.add(floor);
+const top=panel(W,L,wallMat); top.rotation.x=-Math.PI/2; top.position.set(0,H/2,L/2); walls.add(top);
+const sideL=panel(L,H,wallMat); sideL.rotation.y=Math.PI/2; sideL.position.set(-W/2,0,L/2); walls.add(sideL);
+const sideR=sideL.clone(); sideR.position.x=W/2; walls.add(sideR);
+const box=new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(W,H,L)),edgeMat); box.position.z=L/2; chute.add(box);
+// flanges
+const flMat=new THREE.MeshStandardMaterial({color:0xbdb7a3,roughness:.7});
+[0,L].forEach(z=>{const f=new THREE.Mesh(new THREE.BoxGeometry(W+.12,H+.12,.03),flMat);f.position.z=z;
+  const hole=new THREE.LineSegments(new THREE.EdgesGeometry(f.geometry),edgeMat);f.add(hole);chute.add(f);});
+// inlet stub (from DTDC) and outlet stub, vertical in world
+function stub(atZ,up){
+  const g=new THREE.Group(); chute.add(g); g.position.z=atZ; g.rotation.x=-TILT;
+  const h=.7; const m=new THREE.Mesh(new THREE.BoxGeometry(W,h,H),wallMat); m.position.y=up?h/2:-h/2; g.add(m);
+  const e=new THREE.LineSegments(new THREE.EdgesGeometry(m.geometry),edgeMat); e.position.copy(m.position); g.add(e);
+  return g;}
+const inlet=stub(0,true);
+
+// sight glass: flush round glass in the floor, held by a square bolted frame outside
+const SH_Z=1.55, SG_R=0.12;
+const yellow=new THREE.MeshStandardMaterial({color:0xf2d21b,roughness:.5});
+const steel=new THREE.MeshStandardMaterial({color:0x8c9590,metalness:.5,roughness:.4});
+const glassMat=new THREE.MeshStandardMaterial({color:0x7fc4e8,metalness:.1,roughness:.05,transparent:true,opacity:.75,side:THREE.DoubleSide,emissive:0x1d4f6b,emissiveIntensity:.35});
+const sg=new THREE.Group(); sg.position.set(0,-H/2,SH_Z); chute.add(sg);
+const glass=new THREE.Mesh(new THREE.CircleGeometry(SG_R,48),glassMat); glass.rotation.x=-Math.PI/2; glass.position.y=.002; sg.add(glass);
+const rimIn=new THREE.Mesh(new THREE.RingGeometry(SG_R,SG_R+.012,48),steel); rimIn.rotation.x=-Math.PI/2; rimIn.position.y=.003; sg.add(rimIn);
+const frameShape=new THREE.Shape(); const fs=.22; frameShape.moveTo(-fs,-fs);frameShape.lineTo(fs,-fs);frameShape.lineTo(fs,fs);frameShape.lineTo(-fs,fs);frameShape.lineTo(-fs,-fs);
+const fh=new THREE.Path(); fh.absarc(0,0,SG_R,0,Math.PI*2,true); frameShape.holes.push(fh);
+const frame=new THREE.Mesh(new THREE.ExtrudeGeometry(frameShape,{depth:.035,bevelEnabled:false}),new THREE.MeshStandardMaterial({color:0x9aa09b,roughness:.55,metalness:.3}));
+frame.rotation.x=Math.PI/2; frame.position.y=-.004; sg.add(frame);
+const glassUnder=glass.clone(); glassUnder.position.y=-.03; sg.add(glassUnder);
+[[-1,-1],[1,-1],[1,1],[-1,1]].forEach(([a,b])=>{const bolt=new THREE.Mesh(new THREE.CylinderGeometry(.015,.015,.03,12),steel); bolt.position.set(a*.18,-.05,b*.18); sg.add(bolt);});
+// outside devices on side walls (as in photos)
+// sampling nozzles at sight-glass level; the probe goes across the chute here, so plates must end upstream of this line
+const NZ_R=.09;
+const dev1=new THREE.Mesh(new THREE.CylinderGeometry(NZ_R,NZ_R,.42,20),yellow); dev1.rotation.z=Math.PI/2.6; dev1.position.set(-W/2-.2,.08,SH_Z); chute.add(dev1);
+const probe=new THREE.Mesh(new THREE.CylinderGeometry(.03,.03,W,16),new THREE.MeshStandardMaterial({color:0xf2d21b,transparent:true,opacity:.35,depthWrite:false}));
+probe.rotation.z=Math.PI/2; probe.position.set(0,0,SH_Z); chute.add(probe);
+const dev2=new THREE.Mesh(new THREE.BoxGeometry(.18,.3,.3),yellow); dev2.position.set(W/2+.1,0,SH_Z); chute.add(dev2);
+
+// guide plates
+const PL_T=0.03; let PL_H=H*0.5; const FL_W=0.075; // angle-iron flange width on the floor
+const plateMat=new THREE.MeshStandardMaterial({color:0x8a5a1c,roughness:.6,metalness:.1});
+const plates=new THREE.Group(); chute.add(plates);
+let pAng=32*Math.PI/180, pGap=0.25, pLen=0.5, plateOn=true;
+const pl=[]; // collision descriptors
+function buildPlates(){
+  plates.clear(); pl.length=0;
+  // plate tips end right at the upstream edge of the sight glass
+  const tipZ=SH_Z-NZ_R-0.06; // stop above the sampling nozzle pLen=(W/2-pGap/2)/Math.sin(pAng);
+  const PL_Z0=Math.max(0.05,tipZ-pLen*Math.cos(pAng));
+  [-1,1].forEach(s=>{
+    const x0=s*W/2, z0=PL_Z0;
+    const dx=-s*Math.sin(pAng), dz=Math.cos(pAng);
+    // angle iron: upright leg faces the flow, flat leg welded to the floor (sight-glass side), on the back side
+    const g=new THREE.Group(); g.position.set(x0+dx*pLen/2, -H/2, z0+dz*pLen/2); g.rotation.y=Math.atan2(dx,dz); plates.add(g);
+    const edgeM=new THREE.LineBasicMaterial({color:0x4a2f0c});
+    const leg=new THREE.Mesh(new THREE.BoxGeometry(PL_T,PL_H,pLen),plateMat); leg.position.y=PL_H/2; g.add(leg);
+    leg.add(new THREE.LineSegments(new THREE.EdgesGeometry(leg.geometry),edgeM));
+    const flMatD=new THREE.MeshStandardMaterial({color:0x6e4614,roughness:.7});
+    const fl=new THREE.Mesh(new THREE.BoxGeometry(FL_W,PL_T,pLen),flMatD);
+    fl.position.set(s*(FL_W/2-PL_T/2),PL_T/2+.001,0); g.add(fl);
+    fl.add(new THREE.LineSegments(new THREE.EdgesGeometry(fl.geometry),edgeM));
+    // weld bead along the toe of the flange
+    const weld=new THREE.Mesh(new THREE.BoxGeometry(.012,.012,pLen),new THREE.MeshStandardMaterial({color:0x5b5f5c,roughness:.9}));
+    weld.position.set(s*(FL_W-PL_T/2),.006,0); g.add(weld);
+    // normal pointing into channel upstream side
+    pl.push({x0,z0,dx,dz,nx:dz*(-s),nz:-dx*(-s)*(-1)});
+  });
+  pl.forEach(p=>{ // fix normal: perpendicular to (dx,dz), pointing toward channel center / upstream
+    let nx=p.dz, nz=-p.dx; if(nx*(-Math.sign(p.x0))<0){nx=-nx;nz=-nz;} p.nx=nx; p.nz=nz; });
+  plates.visible=plateOn;
+  const gap=W-2*pLen*Math.sin(pAng);
+  document.getElementById('angV').textContent=Math.round(pAng*180/Math.PI)+'°';
+  document.getElementById('lenV').textContent=Math.round(Math.max(gap,0)*MM)+' mm (กระจก Ø'+Math.round(SG_R*2*MM)+')';
+  document.getElementById('hV').textContent=Math.round(PL_H/H*100)+'% ของความลึกราง';
+}
+buildPlates();
+
+// ---- particles ----
+const N=1400, R=0.022;
+const pGeo=new THREE.SphereGeometry(R,8,6);
+const pMat=new THREE.MeshStandardMaterial({roughness:.9});
+const inst=new THREE.InstancedMesh(pGeo,pMat,N); chute.add(inst);
+const P=new Float32Array(N*3), V=new Float32Array(N*3), hit=new Uint8Array(N), alive=new Uint8Array(N);
+const cFree=new THREE.Color(0xe8a46c), cHit=new THREE.Color(0xc0491b);
+const dummy=new THREE.Object3D();
+for(let i=0;i<N;i++){inst.setColorAt(i,cFree);}
+const G=4.0, gz=G*Math.sin(TILT), gy=-G*Math.cos(TILT);
+let rate=60, spawnAcc=0, running=true;
+function spawn(i){
+  P[i*3]=(Math.random()-.5)*(W-2*R); P[i*3+1]=H/2-R-Math.random()*.15; P[i*3+2]=0.02+Math.random()*.08;
+  V[i*3]=(Math.random()-.5)*.1; V[i*3+1]=-.4-Math.random()*.4; V[i*3+2]=.25+Math.random()*.2;
+  hit[i]=0; alive[i]=1; inst.setColorAt(i,cFree);
+}
+let outCount=0, outCenter=0, outLog=[];
+function step(dt){
+  for(let i=0;i<N;i++){ if(!alive[i]) continue;
+    let o=i*3, x=P[o],y=P[o+1],z=P[o+2], vx=V[o],vy=V[o+1],vz=V[o+2];
+    vy+=gy*dt; vz+=gz*dt;
+    x+=vx*dt; y+=vy*dt; z+=vz*dt;
+    // floor with friction
+    const fy=-H/2+R;
+    if(y<fy){ y=fy; if(vy<0) vy=-vy*0.15; const f=1-2.2*dt; vx*=f; vz*=f; }
+    if(y>H/2-R){ y=H/2-R; if(vy>0) vy=0; }
+    if(x<-W/2+R){x=-W/2+R; if(vx<0) vx=-vx*.2;}
+    if(x>W/2-R){x=W/2-R; if(vx>0) vx=-vx*.2;}
+    // plates
+    if(plateOn && y<-H/2+PL_H+R){
+      for(const p of pl){
+        const rx=x-p.x0, rz=z-p.z0; const t=rx*p.dx+rz*p.dz;
+        if(t<-R||t>pLen+R) continue;
+        const d=rx*p.nx+rz*p.nz;
+        if(d<R+PL_T/2 && d>-0.07){
+          const push=R+PL_T/2-d; x+=p.nx*push; z+=p.nz*push;
+          const vn=vx*p.nx+vz*p.nz; if(vn<0){vx-=vn*p.nx*1.1; vz-=vn*p.nz*1.1;}
+          vx*=0.985; vz*=0.985;
+          if(!hit[i]){hit[i]=1; inst.setColorAt(i,cHit);}
+        }
+      }
+    }
+    if(P[o+2]<SH_Z && z>=SH_Z){ outLog.push(Math.abs(x)<SG_R?1:0); if(outLog.length>400) outLog.shift(); }
+    if(z>L-R){ alive[i]=0; y=-50; }
+    P[o]=x;P[o+1]=y;P[o+2]=z;V[o]=vx;V[o+1]=vy;V[o+2]=vz;
+  }
+}
+function updateInst(){
+  for(let i=0;i<N;i++){ const o=i*3;
+    if(alive[i]) dummy.position.set(P[o],P[o+1],P[o+2]); else dummy.position.set(0,-50,0);
+    dummy.updateMatrix(); inst.setMatrixAt(i,dummy.matrix); }
+  inst.instanceMatrix.needsUpdate=true; if(inst.instanceColor) inst.instanceColor.needsUpdate=true;
+}
+for(let i=0;i<N;i++) alive[i]=0;
+let cursor=0;
+function emit(dt){ spawnAcc+=rate*4*dt; while(spawnAcc>=1){ spawnAcc--; for(let k=0;k<N;k++){cursor=(cursor+1)%N; if(!alive[cursor]){spawn(cursor);break;}} } }
+
+// ---- views ----
+const target=new THREE.Vector3(); chute.updateMatrixWorld();
+const loc=(x,y,z)=>chute.localToWorld(new THREE.Vector3(x,y,z));
+function setView(v){
+  const c=loc(0,0,L*0.45); let pos;
+  if(v==='iso') pos=loc(2.6,2.6,-1.2);
+  if(v==='axis') pos=loc(0,4.2,L*0.45);
+  if(v==='side') pos=loc(4.6,0,L*0.45);
+  if(v==='under') pos=loc(0,-4.2,L*0.45);
+  camera.position.copy(pos); controls.target.copy(c);
+  camera.up.set(0,1,0);
+  if(v==='axis'||v==='under'){ const up=loc(0,0,-1).sub(loc(0,0,0)).normalize(); camera.up.copy(up); }
+  controls.update();
+  document.querySelectorAll('[data-view]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.view===v));
+}
+document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>setView(b.dataset.view));
+setView('iso');
+
+// ---- UI ----
+const tog=(id,fn)=>{const b=document.getElementById(id); b.onclick=()=>{const on=b.getAttribute('aria-pressed')!=='true'; b.setAttribute('aria-pressed',on); fn(on,b);};};
+tog('btnPlate',(on,b)=>{plateOn=on; plates.visible=on; b.textContent=on?'มี Guide plate':'ไม่มี Guide plate'; outLog=[];outCenter=0;});
+tog('btnRun',(on,b)=>{running=on; b.textContent=on?'เล่น':'หยุด';});
+tog('btnWalls',(on)=>{walls.visible=on; inlet.visible=on;});
+const ang=document.getElementById('ang'), len=document.getElementById('len'), rt=document.getElementById('rate');
+ang.oninput=()=>{pAng=ang.value*Math.PI/180; buildPlates(); outLog=[];outCenter=0;};
+len.oninput=()=>{pGap=len.value/100; buildPlates(); outLog=[];outCenter=0;};
+const hgt=document.getElementById('hgt'); hgt.oninput=()=>{PL_H=H*hgt.value/100; buildPlates(); outLog=[];outCenter=0;};
+rt.oninput=()=>{rate=+rt.value; document.getElementById('rateV').textContent=rate+'%';}; rt.oninput();
+
+// theme-aware background
+let lastBgCheck=0;
+function syncBg(){ const c=getComputedStyle(document.documentElement).getPropertyValue('--view').trim(); if(c) scene.background=new THREE.Color(c); }
+syncBg();
+
+function resize(){ const w=viewer.clientWidth,h=viewer.clientHeight; renderer.setSize(w,h,false); camera.aspect=w/h; camera.updateProjectionMatrix(); }
+new ResizeObserver(resize).observe(viewer); resize();
+
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const stat=document.getElementById('stat');
+let last=performance.now();
+// warm up so the first frame shows a developed flow
+for(let k=0;k<420;k++){emit(1/60); for(let s=0;s<3;s++) step(1/180);}
+function loop(now){
+  const dt=Math.min((now-last)/1000,1/30); last=now;
+  if(running){ const sp=reduce?0.4:1; emit(dt*sp); const sub=3; for(let s=0;s<sub;s++) step(dt*sp/sub); }
+  updateInst(); controls.update(); renderer.render(scene,camera);
+  if(now-lastBgCheck>1000){ syncBg(); lastBgCheck=now;
+    const pct=outLog.length?Math.round(outLog.reduce((a,b)=>a+b,0)/outLog.length*100):0;
+    stat.innerHTML='ไหลผ่านหน้า<br>sight glass: <b>'+pct+'%</b>'; }
+  requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>
